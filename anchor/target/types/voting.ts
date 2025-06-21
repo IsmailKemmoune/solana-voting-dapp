@@ -14,54 +14,6 @@ export type Voting = {
   },
   "instructions": [
     {
-      "name": "initializeCondidate",
-      "discriminator": [
-        233,
-        62,
-        234,
-        159,
-        59,
-        181,
-        85,
-        81
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "condidates",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  99,
-                  111,
-                  110,
-                  100,
-                  105,
-                  100,
-                  97,
-                  116,
-                  101,
-                  115
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "initializePoll",
       "discriminator": [
         193,
@@ -75,7 +27,7 @@ export type Voting = {
       ],
       "accounts": [
         {
-          "name": "payer",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
@@ -85,13 +37,8 @@ export type Voting = {
           "pda": {
             "seeds": [
               {
-                "kind": "const",
-                "value": [
-                  112,
-                  111,
-                  108,
-                  108
-                ]
+                "kind": "arg",
+                "path": "pollId"
               }
             ]
           }
@@ -101,23 +48,15 @@ export type Voting = {
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "pollId",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
-    {
-      "name": "condidates",
-      "discriminator": [
-        207,
-        168,
-        239,
-        47,
-        41,
-        197,
-        79,
-        61
-      ]
-    },
     {
       "name": "poll",
       "discriminator": [
@@ -134,35 +73,29 @@ export type Voting = {
   ],
   "types": [
     {
-      "name": "condidates",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "pollId",
-            "type": "u16"
-          },
-          {
-            "name": "condidates",
-            "type": {
-              "vec": "string"
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "poll",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "name",
+            "name": "pollId",
+            "type": "u64"
+          },
+          {
+            "name": "description",
             "type": "string"
           },
           {
-            "name": "id",
-            "type": "u16"
+            "name": "pollStart",
+            "type": "u64"
+          },
+          {
+            "name": "pollEnd",
+            "type": "u64"
+          },
+          {
+            "name": "condidateAcount",
+            "type": "u64"
           }
         ]
       }

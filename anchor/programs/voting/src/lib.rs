@@ -10,7 +10,20 @@ pub const ANCHOR_DISCRIMINATOR_SIZE: usize = 8;
 pub mod voting {
     use super::*;
 
-    pub fn initialize_poll(_context: Context<InitializePoll>, _poll_id: u64) -> Result<()> {
+    pub fn initialize_poll(
+        context: Context<InitializePoll>,
+        poll_id: u64,
+        description: String,
+        poll_start: u64,
+        poll_end: u64,
+    ) -> Result<()> {
+        let poll = &mut context.accounts.poll;
+        poll.poll_id = poll_id;
+        poll.description = description;
+        poll.poll_start = poll_start;
+        poll.poll_end = poll_end;
+        poll.condidate_acount = 0;
+
         Ok(())
     }
 }
