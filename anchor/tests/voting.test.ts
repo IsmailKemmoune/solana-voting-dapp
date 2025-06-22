@@ -33,6 +33,11 @@ describe('Voting', () => {
   })
 
   it('Initialize Candidate', async () => {
+    const [pollAddress] = PublicKey.findProgramAddressSync([new BN(1).toArrayLike(Buffer, 'le', 8)], votingAddress)
+    const poll = await votingProgram.account.poll.fetch(pollAddress)
+
+    console.log(poll, 'poll before candidates')
+
     await votingProgram.methods.initializeCandidate('Candidate 1', new BN(1)).rpc()
     await votingProgram.methods.initializeCandidate('Candidate 2', new BN(1)).rpc()
 
@@ -49,9 +54,13 @@ describe('Voting', () => {
     const secondCandidate = await votingProgram.account.candidate.fetch(secondCandidateAddress)
     console.log({ firstCandidate, secondCandidate }, 'candidates')
 
+    const updatedPoll = await votingProgram.account.poll.fetch(pollAddress)
+    console.log(updatedPoll, 'poll after candidates')
+
     expect(firstCandidate.candidateName).toEqual('Candidate 1')
     expect(secondCandidate.candidateName).toEqual('Candidate 2')
     expect(firstCandidate.candidateVotes.toNumber()).toEqual(0)
     expect(secondCandidate.candidateVotes.toNumber()).toEqual(0)
+    expect(updatedPoll.candidateAmount.toNumber()).toEqual(2)
   })
 })

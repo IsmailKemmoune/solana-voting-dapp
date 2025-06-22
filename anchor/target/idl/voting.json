@@ -27,6 +27,7 @@
         },
         {
           "name": "poll",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -121,6 +122,30 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "vote",
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
+      "accounts": [],
+      "args": [
+        {
+          "name": "candidate_name",
+          "type": "string"
+        },
+        {
+          "name": "poll_id",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -190,7 +215,7 @@
             "type": "u64"
           },
           {
-            "name": "candidate_acount",
+            "name": "candidate_amount",
             "type": "u64"
           }
         ]

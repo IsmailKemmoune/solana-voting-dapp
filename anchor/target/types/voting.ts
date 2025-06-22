@@ -33,6 +33,7 @@ export type Voting = {
         },
         {
           "name": "poll",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -127,6 +128,30 @@ export type Voting = {
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "vote",
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
+      "accounts": [],
+      "args": [
+        {
+          "name": "candidateName",
+          "type": "string"
+        },
+        {
+          "name": "pollId",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -196,7 +221,7 @@ export type Voting = {
             "type": "u64"
           },
           {
-            "name": "candidateAcount",
+            "name": "candidateAmount",
             "type": "u64"
           }
         ]
