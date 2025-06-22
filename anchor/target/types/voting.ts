@@ -14,16 +14,16 @@ export type Voting = {
   },
   "instructions": [
     {
-      "name": "initializeCondidate",
+      "name": "initializeCandidate",
       "discriminator": [
-        233,
-        62,
-        234,
-        159,
-        59,
-        181,
-        85,
-        81
+        210,
+        107,
+        118,
+        204,
+        255,
+        97,
+        112,
+        26
       ],
       "accounts": [
         {
@@ -43,17 +43,17 @@ export type Voting = {
           }
         },
         {
-          "name": "condidate",
+          "name": "candidate",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "arg",
-                "path": "pollId"
+                "path": "candidateName"
               },
               {
                 "kind": "arg",
-                "path": "condidateName"
+                "path": "pollId"
               }
             ]
           }
@@ -65,8 +65,12 @@ export type Voting = {
       ],
       "args": [
         {
-          "name": "condidateName",
+          "name": "candidateName",
           "type": "string"
+        },
+        {
+          "name": "pollId",
+          "type": "u64"
         }
       ]
     },
@@ -127,16 +131,16 @@ export type Voting = {
   ],
   "accounts": [
     {
-      "name": "condidate",
+      "name": "candidate",
       "discriminator": [
-        228,
-        231,
-        26,
-        82,
-        91,
-        252,
-        247,
-        71
+        86,
+        69,
+        250,
+        96,
+        193,
+        10,
+        222,
+        123
       ]
     },
     {
@@ -155,16 +159,16 @@ export type Voting = {
   ],
   "types": [
     {
-      "name": "condidate",
+      "name": "candidate",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "condidateName",
+            "name": "candidateName",
             "type": "string"
           },
           {
-            "name": "condidateVotes",
+            "name": "candidateVotes",
             "type": "u64"
           }
         ]
@@ -192,7 +196,7 @@ export type Voting = {
             "type": "u64"
           },
           {
-            "name": "condidateAcount",
+            "name": "candidateAcount",
             "type": "u64"
           }
         ]

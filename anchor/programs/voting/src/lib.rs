@@ -22,18 +22,19 @@ pub mod voting {
         poll.description = description;
         poll.poll_start = poll_start;
         poll.poll_end = poll_end;
-        poll.condidate_acount = 0;
+        poll.candidate_acount = 0;
 
         Ok(())
     }
 
-    pub fn initialize_condidate(
-        context: Context<InitializeCondidate>,
-        condidate_name: String,
+    pub fn initialize_candidate(
+        context: Context<InitializeCandidate>,
+        candidate_name: String,
+        _poll_id: u64,
     ) -> Result<()> {
-        context.accounts.condidate.set_inner(Condidate {
-            condidate_name,
-            condidate_votes: 0,
+        context.accounts.candidate.set_inner(Candidate {
+            candidate_name,
+            candidate_votes: 0,
         });
 
         Ok(())
@@ -41,26 +42,26 @@ pub mod voting {
 }
 
 #[derive(Accounts)]
-#[instruction(condidate_name: String, poll_id: u64)]
-pub struct InitializeCondidate<'info> {
+#[instruction(candidate_name: String, poll_id: u64)]
+pub struct InitializeCandidate<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
 
     #[account(seeds = [poll_id.to_le_bytes().as_ref()], bump)]
     pub poll: Account<'info, Poll>,
 
-    #[account(init, payer = signer, space = ANCHOR_DISCRIMINATOR_SIZE + Condidate::INIT_SPACE, seeds = [poll_id.to_le_bytes().as_ref(), condidate_name.as_bytes()], bump)]
-    pub condidate: Account<'info, Condidate>,
+    #[account(init, payer = signer, space = ANCHOR_DISCRIMINATOR_SIZE + Candidate::INIT_SPACE, seeds = [candidate_name.as_bytes(), poll_id.to_le_bytes().as_ref()], bump)]
+    pub candidate: Account<'info, Candidate>,
 
     pub system_program: Program<'info, System>,
 }
 
 #[account]
 #[derive(InitSpace)]
-pub struct Condidate {
+pub struct Candidate {
     #[max_len(50)]
-    condidate_name: String,
-    condidate_votes: u64,
+    candidate_name: String,
+    candidate_votes: u64,
 }
 
 #[derive(Accounts)]
@@ -83,5 +84,5 @@ pub struct Poll {
     pub description: String,
     pub poll_start: u64,
     pub poll_end: u64,
-    pub condidate_acount: u64,
+    pub candidate_acount: u64,
 }

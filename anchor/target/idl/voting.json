@@ -8,16 +8,16 @@
   },
   "instructions": [
     {
-      "name": "initialize_condidate",
+      "name": "initialize_candidate",
       "discriminator": [
-        233,
-        62,
-        234,
-        159,
-        59,
-        181,
-        85,
-        81
+        210,
+        107,
+        118,
+        204,
+        255,
+        97,
+        112,
+        26
       ],
       "accounts": [
         {
@@ -37,17 +37,17 @@
           }
         },
         {
-          "name": "condidate",
+          "name": "candidate",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "arg",
-                "path": "poll_id"
+                "path": "candidate_name"
               },
               {
                 "kind": "arg",
-                "path": "condidate_name"
+                "path": "poll_id"
               }
             ]
           }
@@ -59,8 +59,12 @@
       ],
       "args": [
         {
-          "name": "condidate_name",
+          "name": "candidate_name",
           "type": "string"
+        },
+        {
+          "name": "_poll_id",
+          "type": "u64"
         }
       ]
     },
@@ -121,16 +125,16 @@
   ],
   "accounts": [
     {
-      "name": "Condidate",
+      "name": "Candidate",
       "discriminator": [
-        228,
-        231,
-        26,
-        82,
-        91,
-        252,
-        247,
-        71
+        86,
+        69,
+        250,
+        96,
+        193,
+        10,
+        222,
+        123
       ]
     },
     {
@@ -149,16 +153,16 @@
   ],
   "types": [
     {
-      "name": "Condidate",
+      "name": "Candidate",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "condidate_name",
+            "name": "candidate_name",
             "type": "string"
           },
           {
-            "name": "condidate_votes",
+            "name": "candidate_votes",
             "type": "u64"
           }
         ]
@@ -186,7 +190,7 @@
             "type": "u64"
           },
           {
-            "name": "condidate_acount",
+            "name": "candidate_acount",
             "type": "u64"
           }
         ]
