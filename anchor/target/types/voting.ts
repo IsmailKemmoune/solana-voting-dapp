@@ -14,6 +14,63 @@ export type Voting = {
   },
   "instructions": [
     {
+      "name": "initializeCondidate",
+      "discriminator": [
+        233,
+        62,
+        234,
+        159,
+        59,
+        181,
+        85,
+        81
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "poll",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "pollId"
+              }
+            ]
+          }
+        },
+        {
+          "name": "condidate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "pollId"
+              },
+              {
+                "kind": "arg",
+                "path": "condidateName"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "condidateName",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "initializePoll",
       "discriminator": [
         193,
@@ -70,6 +127,19 @@ export type Voting = {
   ],
   "accounts": [
     {
+      "name": "condidate",
+      "discriminator": [
+        228,
+        231,
+        26,
+        82,
+        91,
+        252,
+        247,
+        71
+      ]
+    },
+    {
       "name": "poll",
       "discriminator": [
         110,
@@ -84,6 +154,22 @@ export type Voting = {
     }
   ],
   "types": [
+    {
+      "name": "condidate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "condidateName",
+            "type": "string"
+          },
+          {
+            "name": "condidateVotes",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "poll",
       "type": {

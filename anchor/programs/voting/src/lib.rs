@@ -26,6 +26,41 @@ pub mod voting {
 
         Ok(())
     }
+
+    pub fn initialize_condidate(
+        context: Context<InitializeCondidate>,
+        condidate_name: String,
+    ) -> Result<()> {
+        context.accounts.condidate.set_inner(Condidate {
+            condidate_name,
+            condidate_votes: 0,
+        });
+
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+#[instruction(condidate_name: String, poll_id: u64)]
+pub struct InitializeCondidate<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+
+    #[account(seeds = [poll_id.to_le_bytes().as_ref()], bump)]
+    pub poll: Account<'info, Poll>,
+
+    #[account(init, payer = signer, space = ANCHOR_DISCRIMINATOR_SIZE + Condidate::INIT_SPACE, seeds = [poll_id.to_le_bytes().as_ref(), condidate_name.as_bytes()], bump)]
+    pub condidate: Account<'info, Condidate>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Condidate {
+    #[max_len(50)]
+    condidate_name: String,
+    condidate_votes: u64,
 }
 
 #[derive(Accounts)]

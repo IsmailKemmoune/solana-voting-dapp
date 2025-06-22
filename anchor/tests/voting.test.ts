@@ -23,5 +23,7 @@ describe('Voting', () => {
     console.log(poll, 'poll')
 
     expect(poll.pollId.toNumber()).toEqual(1)
+    expect(poll.description).toEqual('this is a description')
+    expect(poll.pollStart.toNumber()).toBeLessThan(poll.pollEnd.toNumber())
   })
 })
