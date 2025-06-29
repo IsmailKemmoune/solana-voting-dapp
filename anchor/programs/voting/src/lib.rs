@@ -43,13 +43,24 @@ pub mod voting {
         Ok(())
     }
 
-    pub fn vote(context: Context<Vote>, candidate_name: String, poll_id: u64) -> Result<()> {
+    pub fn vote(context: Context<Vote>, _candidate_name: String, _poll_id: u64) -> Result<()> {
+        let candidate = &mut context.accounts.candidate;
+        candidate.candidate_votes += 1;
+
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct Vote {}
+#[instruction(candidate_name: String, poll_id: u64)]
+pub struct Vote<'info> {
+    pub signer: Signer<'info>,
+
+    //     #[account(mut, seeds = [poll_id.to_le_bytes().as_ref()], bump)]
+    // pub poll: Account<'info, Poll>,
+    #[account(mut, seeds = [candidate_name.as_bytes(), poll_id.to_le_bytes().as_ref()], bump)]
+    pub candidate: Account<'info, Candidate>,
+}
 
 #[derive(Accounts)]
 #[instruction(candidate_name: String, poll_id: u64)]

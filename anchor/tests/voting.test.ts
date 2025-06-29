@@ -63,4 +63,21 @@ describe('Voting', () => {
     expect(secondCandidate.candidateVotes.toNumber()).toEqual(0)
     expect(updatedPoll.candidateAmount.toNumber()).toEqual(2)
   })
+
+  it('vote', async () => {
+    const [candidateAddress] = PublicKey.findProgramAddressSync(
+      [Buffer.from('Candidate 1'), new BN(1).toArrayLike(Buffer, 'le', 8)],
+      votingAddress,
+    )
+    const candidate = await votingProgram.account.candidate.fetch(candidateAddress)
+
+    console.log(candidate, 'candidate before voting')
+
+    await votingProgram.methods.vote('Candidate 1', new BN(1)).rpc()
+
+    const updateCandidate = await votingProgram.account.candidate.fetch(candidateAddress)
+
+    console.log(updateCandidate, 'candidate after voting')
+    expect(updateCandidate.candidateVotes.toNumber()).toEqual(1)
+  })
 })

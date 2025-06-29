@@ -1,5 +1,5 @@
 {
-  "address": "FqzkXZdwYjurnUKetJCAvaUw5WAqbwzU6gZEwydeEfqS",
+  "address": "34SiGcJnqxewBL7tmYdqiGobnAnz2swzvfRhznamjTWR",
   "metadata": {
     "name": "voting",
     "version": "0.1.0",
@@ -135,14 +135,35 @@
         172,
         25
       ],
-      "accounts": [],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "candidate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "arg",
+                "path": "candidate_name"
+              },
+              {
+                "kind": "arg",
+                "path": "poll_id"
+              }
+            ]
+          }
+        }
+      ],
       "args": [
         {
-          "name": "candidate_name",
+          "name": "_candidate_name",
           "type": "string"
         },
         {
-          "name": "poll_id",
+          "name": "_poll_id",
           "type": "u64"
         }
       ]
