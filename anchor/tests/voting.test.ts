@@ -3,8 +3,9 @@ import { PublicKey } from '@solana/web3.js'
 import { BN, Program } from '@coral-xyz/anchor'
 import { Voting } from '../target/types/voting'
 import IDL from '../target/idl/voting.json'
-import { beforeAll, expect } from '@jest/globals'
-const votingAddress = new PublicKey('FqzkXZdwYjurnUKetJCAvaUw5WAqbwzU6gZEwydeEfqS')
+import { beforeAll, describe, expect, it } from '@jest/globals'
+
+const PROGRAM_ID = new PublicKey('devvZXye2LMD4miQiHDLuz7qjEWvgwCztCpcjvy45Vr')
 
 describe('Voting', () => {
   let context
@@ -12,72 +13,88 @@ describe('Voting', () => {
   let votingProgram: Program<Voting>
 
   beforeAll(async () => {
-    context = await startAnchor('', [{ name: 'voting', programId: votingAddress }], [])
+    context = await startAnchor('', [{ name: 'voting', programId: PROGRAM_ID }], [])
 
     provider = new BankrunProvider(context)
 
-    votingProgram = new Program<Voting>(IDL, provider)
+    votingProgram = new Program<Voting>(IDL as Voting, provider)
   })
 
   it('Initialize Poll', async () => {
-    await votingProgram.methods.initializePoll(new BN(1), 'this is a description', new BN(0), new BN(1850536880)).rpc()
+    const pollId = 1
+    const pollDescription = "Who's going to win the war?"
+    const pollStart = new BN(Math.floor(Date.now() / 1000))
+    const pollEnd = new BN(Math.floor(Date.now() / 1000) + 86400 * 30)
 
-    const [pollAddress] = PublicKey.findProgramAddressSync([new BN(1).toArrayLike(Buffer, 'le', 8)], votingAddress)
+    console.log('Initializing poll...')
+    // Initialize poll
+    const pollTransaction = await votingProgram.methods
+      .initializePoll(new BN(pollId), pollDescription, pollStart, pollEnd)
+      .rpc()
+
+    console.log('Poll Transaction', pollTransaction)
+    console.log('Poll initialized successfully')
+
+    const [pollAddress] = PublicKey.findProgramAddressSync([new BN(1).toArrayLike(Buffer, 'le', 8)], PROGRAM_ID)
 
     const poll = await votingProgram.account.poll.fetch(pollAddress)
-    console.log(poll, 'poll')
+    console.log(poll, 'Poll')
 
     expect(poll.pollId.toNumber()).toEqual(1)
-    expect(poll.description).toEqual('this is a description')
+    expect(poll.description).toEqual("Who's going to win the war?")
     expect(poll.pollStart.toNumber()).toBeLessThan(poll.pollEnd.toNumber())
   })
 
   it('Initialize Candidate', async () => {
-    const [pollAddress] = PublicKey.findProgramAddressSync([new BN(1).toArrayLike(Buffer, 'le', 8)], votingAddress)
+    const [pollAddress] = PublicKey.findProgramAddressSync([new BN(1).toArrayLike(Buffer, 'le', 8)], PROGRAM_ID)
     const poll = await votingProgram.account.poll.fetch(pollAddress)
 
-    console.log(poll, 'poll before candidates')
+    console.log(poll, 'Poll before Initializing candidates')
 
-    await votingProgram.methods.initializeCandidate('Candidate 1', new BN(1)).rpc()
-    await votingProgram.methods.initializeCandidate('Candidate 2', new BN(1)).rpc()
+    console.log('Initializing candidates...')
+    await votingProgram.methods.initializeCandidate('iran', new BN(1)).rpc()
+    await votingProgram.methods.initializeCandidate('israel', new BN(1)).rpc()
 
     const [firstCandidateAddress] = PublicKey.findProgramAddressSync(
-      [Buffer.from('Candidate 1'), new BN(1).toArrayLike(Buffer, 'le', 8)],
-      votingAddress,
+      [Buffer.from('iran'), new BN(1).toArrayLike(Buffer, 'le', 8)],
+      PROGRAM_ID,
     )
     const [secondCandidateAddress] = PublicKey.findProgramAddressSync(
-      [Buffer.from('Candidate 2'), new BN(1).toArrayLike(Buffer, 'le', 8)],
-      votingAddress,
+      [Buffer.from('israel'), new BN(1).toArrayLike(Buffer, 'le', 8)],
+      PROGRAM_ID,
     )
 
-    const firstCandidate = await votingProgram.account.candidate.fetch(firstCandidateAddress)
-    const secondCandidate = await votingProgram.account.candidate.fetch(secondCandidateAddress)
-    console.log({ firstCandidate, secondCandidate }, 'candidates')
+    const iranCandidate = await votingProgram.account.candidate.fetch(firstCandidateAddress)
+    const israelCandidate = await votingProgram.account.candidate.fetch(secondCandidateAddress)
+
+    console.log('Iran candidate:', iranCandidate)
+    console.log('Israel candidate:', israelCandidate)
 
     const updatedPoll = await votingProgram.account.poll.fetch(pollAddress)
-    console.log(updatedPoll, 'poll after candidates')
 
-    expect(firstCandidate.candidateName).toEqual('Candidate 1')
-    expect(secondCandidate.candidateName).toEqual('Candidate 2')
-    expect(firstCandidate.candidateVotes.toNumber()).toEqual(0)
-    expect(secondCandidate.candidateVotes.toNumber()).toEqual(0)
+    console.log(updatedPoll, 'Poll after Initializing candidates')
+
+    expect(iranCandidate.candidateName).toEqual('iran')
+    expect(israelCandidate.candidateName).toEqual('israel')
+    expect(iranCandidate.candidateVotes.toNumber()).toEqual(0)
+    expect(israelCandidate.candidateVotes.toNumber()).toEqual(0)
     expect(updatedPoll.candidateAmount.toNumber()).toEqual(2)
   })
 
   it('vote', async () => {
     const [candidateAddress] = PublicKey.findProgramAddressSync(
-      [Buffer.from('Candidate 1'), new BN(1).toArrayLike(Buffer, 'le', 8)],
-      votingAddress,
+      [Buffer.from('iran'), new BN(1).toArrayLike(Buffer, 'le', 8)],
+      PROGRAM_ID,
     )
     const candidate = await votingProgram.account.candidate.fetch(candidateAddress)
 
-    console.log(candidate, 'candidate before voting')
+    console.log(candidate, 'Candidate before voting')
 
-    await votingProgram.methods.vote('Candidate 1', new BN(1)).rpc()
+    await votingProgram.methods.vote('iran', new BN(1)).rpc()
 
     const updateCandidate = await votingProgram.account.candidate.fetch(candidateAddress)
 
-    console.log(updateCandidate, 'candidate after voting')
+    console.log(updateCandidate, 'Candidate after voting')
     expect(updateCandidate.candidateVotes.toNumber()).toEqual(1)
   })
 })
